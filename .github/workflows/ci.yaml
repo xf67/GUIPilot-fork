@@ -33,7 +33,7 @@ jobs:
           pip install -e environment.yml || pip install -e .
       - name: Run tests
         run: |
-          pytest -q --maxfail=1
+          pytest -q --maxfail=1 --cov=guipilot --cov-report=xml --cov-report=html
         env:
           PYTHONWARNINGS: "ignore::DeprecationWarning"
 
