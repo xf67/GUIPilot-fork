@@ -18,6 +18,7 @@ dependencies:
       - PyYAML
       - matplotlib
       - scikit-learn
+      - paddleocr
       - pytest
       - black
       - isort
