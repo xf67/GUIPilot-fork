@@ -24,4 +24,4 @@ dependencies:
       - isort
       - flake8
       - pre-commit
-      - pytest-cov
+      - coverage
