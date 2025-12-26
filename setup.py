@@ -1,13 +1,16 @@
-from setuptools import setup, find_packages
-from pathlib import Path
-import yaml
 import re
+from pathlib import Path
+
+import yaml
+from setuptools import find_packages, setup
 
 HERE = Path(__file__).parent
+
 
 def load_long_description() -> str:
     readme = HERE / "README.md"
     return readme.read_text(encoding="utf-8") if readme.exists() else ""
+
 
 def parse_requirements_txt(path: Path):
     reqs = []
@@ -20,6 +23,7 @@ def parse_requirements_txt(path: Path):
             continue
         reqs.append(line)
     return reqs
+
 
 def load_install_requires():
     req_file = HERE / "requirements.txt"
@@ -52,6 +56,7 @@ def load_install_requires():
         "ultralytics",
         "supervision",
     ]
+
 
 setup(
     name="guipilot",
