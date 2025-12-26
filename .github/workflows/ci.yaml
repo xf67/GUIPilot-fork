@@ -36,6 +36,10 @@ jobs:
           pytest -q --maxfail=1 --cov=guipilot --cov-report=xml --cov-report=html
         env:
           PYTHONWARNINGS: "ignore::DeprecationWarning"
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: coverage.xml
 
   lint:
     name: Lint & Format Checks
