@@ -1,7 +1,6 @@
 import re
 from pathlib import Path
 
-import yaml
 from setuptools import find_packages, setup
 
 HERE = Path(__file__).parent
@@ -25,6 +24,28 @@ def parse_requirements_txt(path: Path):
     return reqs
 
 
+def _is_conda_system_entry(s: str) -> bool:
+    s_low = s.lower()
+    # common markers of conda/system entries or platform libs
+    if s_low.startswith("python") or s_low.startswith("_"):
+        return True
+    if any(
+        tok in s_low
+        for tok in (
+            "linux",
+            "linux-64",
+            "win",
+            "osx",
+            "cuda",
+            "cudnn",
+            "nvidia",
+            "glibc",
+        )
+    ):
+        return True
+    return False
+
+
 def load_install_requires():
     req_file = HERE / "requirements.txt"
     if req_file.exists():
@@ -33,15 +54,39 @@ def load_install_requires():
     env_file = HERE / "environment.yml"
     if env_file.exists():
         try:
+            # Delay import of yaml so setup import won't fail if PyYAML missing in some contexts
+            try:
+                import yaml  # type: ignore
+            except Exception:
+                yaml = None
+
+            if yaml is None:
+                # If PyYAML not available in build environment, avoid parsing env file to prevent failures.
+                # Returning empty list here will fall back to minimal deps below.
+                return []
+
             data = yaml.safe_load(env_file.read_text(encoding="utf-8"))
             deps = data.get("dependencies", []) or []
             install = []
             for d in deps:
                 if isinstance(d, str):
-                    # conda style "package=version" -> "package>=version" fallback
-                    install.append(re.sub(r"=+", ">=", d, count=1))
+                    d = d.strip()
+                    if not d or d.startswith("#"):
+                        continue
+                    # Skip conda/system entries like 'python=3.12.4' or platform libs
+                    if _is_conda_system_entry(d):
+                        continue
+                    # convert single '=' (conda style) to pip-compatible '>=' as a fallback
+                    if re.match(r"^[^=]+=[^=]+$", d) and ":" not in d:
+                        install.append(re.sub(r"=+", ">=", d, count=1))
+                    else:
+                        install.append(d)
                 elif isinstance(d, dict) and "pip" in d:
-                    install.extend(d["pip"])
+                    for p in d["pip"]:
+                        p = p.strip()
+                        if not p or p.startswith("#") or p.startswith("-e"):
+                            continue
+                        install.append(p)
             return install
         except Exception:
             pass
@@ -84,5 +129,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
 )
