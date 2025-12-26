@@ -34,11 +34,9 @@ jobs:
       - name: Run tests
         run: |
           coverage run -m pytest -q --maxfail=1
+          coverage report
         env:
           PYTHONWARNINGS: "ignore::DeprecationWarning"
-      - name: Run coverage report
-        run: |
-          coverage report
 
   lint:
     name: Lint & Format Checks
