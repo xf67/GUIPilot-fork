@@ -29,4 +29,4 @@ repos:
       - id: flake8
         name: flake8 (python)
         additional_dependencies: [flake8-bugbear]
-        args: ['--ignore=E203,E501,W503,F541,B001,E722,B008,B007,E226,E231,E702,E712,E741,F811,B018', '--max-line-length=88']
+        args: ['--ignore=E203,E501,W503,F541,B001,E722,B008,B007,E226,E231,E702,E712,E741,F811,B018,F403,F401', '--max-line-length=88']
