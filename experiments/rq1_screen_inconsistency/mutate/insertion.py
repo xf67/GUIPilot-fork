@@ -5,7 +5,7 @@ from copy import deepcopy
 
 import numpy as np
 from dotenv import load_dotenv
-from utils import load_screen
+from ..utils import load_screen
 
 from guipilot.entities import Bbox, Inconsistency, Screen, Widget
 
@@ -13,7 +13,7 @@ from .utils import sample_p
 
 load_dotenv()
 DATASET_PATH = os.getenv("DATASET_PATH")
-IMAGE_PATHS = glob.glob(os.path.join(DATASET_PATH, "*", "*", "*.jpg"))
+IMAGE_PATHS = glob.glob(os.path.join(DATASET_PATH, "**", "*.jpg"), recursive=True)
 
 
 def insert_widgets(screen: Screen, p: float) -> tuple[Screen, set]:

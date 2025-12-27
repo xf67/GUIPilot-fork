@@ -5,7 +5,7 @@ from timeit import default_timer as timer
 
 import numpy as np
 
-from guipilot.matcher import Pair, Score, WidgetMatcher
+from .matcher import Pair, Score, WidgetMatcher
 
 if typing.TYPE_CHECKING:
     from guipilot.entities import Screen, Widget

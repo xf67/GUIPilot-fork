@@ -1,7 +1,25 @@
-# TODO: 不知道成不成，这个线上ci没有GPU的话，问一下hth他们跑起来的具体怎么执行，抄过来就可以
+#!/bin/bash
+set -e
 
-pip install .
-pip install dotenv
+echo "Starting End-to-End Smoke Test..."
 
+# 1. Install the package in editable mode
+pip install -e .
 
-python ./experiments/rq1_screen_inconsistency/main.py
+# 2. Install dependencies (if any missing)
+pip install opencv-python numpy supervision scikit-learn pillow
+
+# 3. Set DATASET_PATH and PYTHONPATH
+export DATASET_PATH="./datasets/new"
+export PYTHONPATH=$PYTHONPATH:.
+
+# 4. Run the smoke test
+python tests/e2e_smoke_test.py
+
+# 5. Check if evaluation.csv was created
+if [ -f "evaluation.csv" ]; then
+    echo "E2E Smoke Test Passed!"
+else
+    echo "E2E Smoke Test Failed: evaluation.csv not found."
+    exit 1
+fi

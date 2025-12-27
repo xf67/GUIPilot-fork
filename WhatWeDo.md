@@ -25,3 +25,21 @@
     可以抄一下end2end ci的写法，或者直接懒得做了。（TODO）
 
 9. cd，在.github/workflows/release.yaml，我从lfz之前的仓库里直接拿过来了。
+
+```
+主要工作如下：
+单元测试 (TODO 6.1):
+新建了 tests/test_widget.py 和 tests/test_screen.py，覆盖了核心实体的属性计算。
+在 tests/test_logic.py 里给 Matcher 和 Checker 写了逻辑测试（用了 mock 避开对真实模型的依赖）。
+完善了 tests/test_process.py。
+顺手修了坑：更新了 guipilot/matcher/__init__.py 和 guipilot/entities/__init__.py 的导出，并修复了 gvt.py 和 guipilotv2.py 里的循环引用问题。
+端到端测试 (TODO 6.2):
+写了个 tests/e2e_smoke_test.py，它会加载 datasets/new/ 下的样例数据，跑一遍变异、匹配、校验的完整流程，并生成 evaluation.csv。
+更新了 tests/run_end2end.sh，现在它能自动安装环境并跑通 smoke test。
+修了个 Bug：修复了 experiments/rq1_screen_inconsistency/mutate/insertion.py 里路径匹配过死导致搜不到图片的问题。
+Merge 保护 (TODO 8):
+提供了 tests/compare_results.py。这个脚本能对比两份 evaluation.csv，如果 Precision 或 Recall 下降超过 5%，它会报错退出，适合挂在 CI 上做回归检查。
+所有测试（单元测试和 E2E）我都已经在本地跑通了，现在的仓库结构更加稳健。你可以直接跑 ./tests/run_end2end.sh 看看效果。
+
+python -m pytest tests/test_widget.py tests/test_screen.py tests/test_process.py tests/test_logic.py
+```
