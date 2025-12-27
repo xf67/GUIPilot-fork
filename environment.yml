@@ -25,3 +25,5 @@ dependencies:
       - flake8
       - pre-commit
       - coverage
+      - python-dotenv
+      - supervision

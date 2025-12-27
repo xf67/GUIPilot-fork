@@ -51,6 +51,23 @@ def load_install_requires():
     if req_file.exists():
         return parse_requirements_txt(req_file)
 
+    # Fallback common dependencies (conservative)
+    fallback_deps = [
+        "numpy",
+        "opencv-python",
+        "Pillow",
+        "python-dotenv",
+        "pydantic",
+        "ultralytics",
+        "supervision",
+        "PyYAML",
+        "requests",
+        "scikit-learn",
+        "matplotlib",
+        "openai",
+        "paddleocr",
+    ]
+
     env_file = HERE / "environment.yml"
     if env_file.exists():
         try:
@@ -61,9 +78,8 @@ def load_install_requires():
                 yaml = None
 
             if yaml is None:
-                # If PyYAML not available in build environment, avoid parsing env file to prevent failures.
-                # Returning empty list here will fall back to minimal deps below.
-                return []
+                # If PyYAML not available in build environment, return fallback
+                return fallback_deps
 
             data = yaml.safe_load(env_file.read_text(encoding="utf-8"))
             deps = data.get("dependencies", []) or []
@@ -91,16 +107,7 @@ def load_install_requires():
         except Exception:
             pass
 
-    # Fallback common dependencies (conservative)
-    return [
-        "numpy",
-        "opencv-python",
-        "Pillow",
-        "python-dotenv",
-        "pydantic",
-        "ultralytics",
-        "supervision",
-    ]
+    return fallback_deps
 
 
 setup(
@@ -118,7 +125,7 @@ setup(
     install_requires=load_install_requires(),
     extras_require={
         "dev": ["black", "isort", "flake8", "pre-commit"],
-        "test": ["pytest", "pytest-cov"],
+        "test": ["pytest", "pytest-cov", "coverage"],
     },
     classifiers=[
         "Development Status :: 4 - Beta",

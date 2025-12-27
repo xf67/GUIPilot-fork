@@ -30,7 +30,7 @@ jobs:
       - name: Upgrade pip and install package + test deps
         run: |
           python -m pip install --upgrade pip
-          pip install -e environment.yml || pip install -e .
+          pip install -e .[test,dev]
       - name: Run tests
         run: |
           coverage run -m pytest -q --maxfail=1
@@ -62,7 +62,7 @@ jobs:
       - name: Upgrade pip and install deps
         run: |
           python -m pip install --upgrade pip
-          pip install environment.yml || pip install -e .
+          pip install -e .
 
       - name: Make end2end script executable
         run: |
