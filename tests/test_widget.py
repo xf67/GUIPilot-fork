@@ -23,3 +23,5 @@ def test_widget_with_text():
     assert len(widget.text_bboxes) == 1
     assert widget.text_bboxes[0].xmin == 5
 
+
+

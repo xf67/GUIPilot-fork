@@ -63,3 +63,5 @@ def test_gvt_checker_inconsistency():
     # Note: GVT checker returns (x, y, inconsistency_type)
     assert any(res[2] == Inconsistency.COLOR for res in results if len(res) == 3)
 
+
+

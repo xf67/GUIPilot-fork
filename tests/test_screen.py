@@ -40,3 +40,5 @@ def test_screen_ocr(mock_ocr):
     assert widget.texts == ["Click Me"]
     assert len(widget.text_bboxes) == 1
 
+
+
