@@ -12,8 +12,10 @@ from guipilot.entities import Bbox, Inconsistency, Screen, Widget
 from .utils import sample_p
 
 load_dotenv()
-DATASET_PATH = os.getenv("DATASET_PATH")
-IMAGE_PATHS = glob.glob(os.path.join(DATASET_PATH, "**", "*.jpg"), recursive=True)
+DATASET_PATH = os.getenv("DATASET_PATH", "./datasets/new")
+IMAGE_PATHS = []
+if DATASET_PATH:
+    IMAGE_PATHS = glob.glob(os.path.join(DATASET_PATH, "**", "*.jpg"), recursive=True)
 
 
 def insert_widgets(screen: Screen, p: float) -> tuple[Screen, set]:
@@ -57,6 +59,8 @@ def insert_widgets(screen: Screen, p: float) -> tuple[Screen, set]:
     height, width, _ = screen.image.shape
 
     # Select a random screen
+    if not IMAGE_PATHS:
+        raise ValueError(f"No images found in DATASET_PATH: {DATASET_PATH}")
     random_path = random.choice(IMAGE_PATHS)
     random_screen = load_screen(random_path)
     random_screen.ocr()
@@ -133,6 +137,8 @@ def insert_row(screen: Screen, p: float) -> tuple[Screen, set]:
     screen = deepcopy(screen)
 
     # Select a random screen
+    if not IMAGE_PATHS:
+        raise ValueError(f"No images found in DATASET_PATH: {DATASET_PATH}")
     random_path = random.choice(IMAGE_PATHS)
     random_screen = load_screen(random_path)
     random_screen.ocr()

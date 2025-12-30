@@ -37,6 +37,8 @@ jobs:
           coverage report
         env:
           PYTHONWARNINGS: "ignore::DeprecationWarning"
+          DATASET_PATH: "./datasets/new"
+          PYTHONPATH: "."
 
   end2end:
     name: End-to-end Tests
