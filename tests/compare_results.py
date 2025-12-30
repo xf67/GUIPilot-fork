@@ -1,6 +1,7 @@
 import csv
-import sys
 import os
+import sys
+
 
 def load_results(file_path):
     results = {}
@@ -9,32 +10,32 @@ def load_results(file_path):
     with open(file_path, "r") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            # Key by id, mutation, matcher, checker
             key = (row["id"], row["mutation"], row["matcher"], row["checker"])
             results[key] = {
                 "tp": int(row["tp"]),
                 "fp": int(row["fp"]),
-                "fn": int(row["fn"])
+                "fn": int(row["fn"]),
             }
     return results
+
 
 def calculate_metrics(data):
     tp = data["tp"]
     fp = data["fp"]
     fn = data["fn"]
-    
     precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
     recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
     return precision, recall
 
+
 def main():
     if len(sys.argv) < 3:
-        print("Usage: python compare_results.py <base_results.csv> <head_results.csv>")
+        print("Usage: python compare_results.py")
+        print("       <base_results.csv> <head_results.csv>")
         sys.exit(1)
 
     base_file = sys.argv[1]
     head_file = sys.argv[2]
-
     base_results = load_results(base_file)
     head_results = load_results(head_file)
 
@@ -43,38 +44,27 @@ def main():
         sys.exit(1)
 
     regression = False
-    threshold = 0.05 # 5% drop
+    threshold = 0.05
 
     for key, head_data in head_results.items():
         if key not in base_results:
-            print(f"New test case found: {key}. Skipping comparison.")
             continue
-        
         base_data = base_results[key]
         base_p, base_r = calculate_metrics(base_data)
         head_p, head_r = calculate_metrics(head_data)
 
-        print(f"Comparing {key}:")
-        print(f"  Base: Precision={base_p:.2f}, Recall={base_r:.2f}")
-        print(f"  Head: Precision={head_p:.2f}, Recall={head_r:.2f}")
-
         if head_p < base_p - threshold:
-            print(f"  !!! Precision dropped significantly: {base_p:.2f} -> {head_p:.2f}")
+            print("  !!! Precision drop detected")
             regression = True
         if head_r < base_r - threshold:
-            print(f"  !!! Recall dropped significantly: {base_r:.2f} -> {head_r:.2f}")
+            print("  !!! Recall drop detected")
             regression = True
 
     if regression:
-        print("\nRegression detected!")
         sys.exit(1)
     else:
-        print("\nNo significant regression detected.")
         sys.exit(0)
+
 
 if __name__ == "__main__":
     main()
-
-
-
-

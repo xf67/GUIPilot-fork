@@ -19,17 +19,18 @@ def test_add_screen():
 
     process.add(screen)
 
+
 def test_add_multiple_screens():
     process = Process()
     image1 = np.zeros((100, 100, 3), dtype=np.uint8)
     image2 = np.ones((100, 100, 3), dtype=np.uint8)
-    
+
     screen1 = Screen(image=image1)
     screen2 = Screen(image=image2)
-    
+
     process.add(screen1)
     process.add(screen2)
-    
+
     assert len(process.screens) == 2
     assert process.screens[0] is screen1
     assert process.screens[1] is screen2

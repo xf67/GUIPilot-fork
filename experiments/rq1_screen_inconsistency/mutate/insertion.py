@@ -5,10 +5,10 @@ from copy import deepcopy
 
 import numpy as np
 from dotenv import load_dotenv
-from ..utils import load_screen
 
 from guipilot.entities import Bbox, Inconsistency, Screen, Widget
 
+from ..utils import load_screen
 from .utils import sample_p
 
 load_dotenv()
