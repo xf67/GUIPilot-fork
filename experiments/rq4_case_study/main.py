@@ -12,7 +12,8 @@ from utils import (
     visualize,
 )
 
-from guipilot.agent import GPTAgent
+from guipilot.agent import GPTAgent,QwenAgent
+from guipilot.matcher import GUIPilotV2 as GUIPilotMatcher
 from guipilot.checker import GVT as GVTChecker
 from guipilot.entities import Screen
 from guipilot.matcher import GUIPilotV2 as GUIPilotMatcher
@@ -30,15 +31,17 @@ def get_processes(mockups_path: str) -> list[str]:
 
 
 base_path = os.path.dirname(os.path.abspath(__file__))
+load_dotenv()
 mockups_path = os.getenv("DATASET_PATH")
 process_paths = get_processes(mockups_path)
-load_dotenv()
 
 for p, process_path in enumerate(process_paths):
     process_id = process_path.replace(mockups_path, "")
     print(f"{process_id}")
 
-    agent = GPTAgent(api_key=os.getenv("OPENAI_KEY"))
+    # agent = GPTAgent(api_key=os.getenv("OPENAI_KEY"))
+    qwen_api_key = os.getenv("QWEN_API_KEY")  # 需要在.env文件中添加
+    agent = QwenAgent(api_key=qwen_api_key)
     matcher = GUIPilotMatcher()
     checker = GVTChecker()
 
@@ -48,8 +51,6 @@ for p, process_path in enumerate(process_paths):
     process: list = json.load(open(json_path, "r"))
 
     for s, step in enumerate(process):
-        if s != 4:
-            continue
         screen_filename: str = step["screen"]
         if "branch" in screen_filename:
             continue

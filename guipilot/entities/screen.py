@@ -18,9 +18,11 @@ if typing.TYPE_CHECKING:
     from .screen import Screen
 
 
-ocr = OCR(service_url="http://localhost:5000/detect")
-detector = Detector(service_url="http://localhost:6000/detect")
+# ocr = OCR(service_url="http://localhost:5000/detect")
+# detector = Detector(service_url="http://localhost:6000/detect")
 
+ocr = OCR()
+detector = Detector()
 
 @dataclass
 class Screen:
@@ -54,7 +56,11 @@ class Screen:
         widgets = self.widgets.values()
         for widget in widgets:
             xmin, ymin, xmax, ymax = widget.bbox
+            if xmin >= xmax or ymin >= ymax:
+                continue
             widget_image = image[ymin:ymax, xmin:xmax].copy()
+            if widget_image.size == 0 or widget_image.shape[0] < 10 or widget_image.shape[1] < 10:
+                continue
             try:
                 widget.texts, widget.text_bboxes = ocr(widget_image)
             except Exception as e:
