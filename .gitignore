@@ -5,8 +5,7 @@ __pycache__
 *.zip
 *.txt
 *.apk
-*.pt
-
+build/
 .env
 
 experiments/rq1_screen_inconsistency/analysis

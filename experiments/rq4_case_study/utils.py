@@ -93,10 +93,19 @@ def get_action_completion(agent: Agent, screen: Screen, mock_actions: list[str])
 
     actions, action_names = [], []
     translator = Translator(screen)
-    matches = re.findall(r"(\w+)\((.*)\)", response)
+    if isinstance(response, list) and len(response) > 0:
+        response = response[0].get('text', '')
+    else:
+        response = str(response)
+    #print(response)
+    matches = re.findall(r"(\w+)\((.*?)\)", response)
     for method_name, params in matches:
         method = getattr(translator, method_name, None)
-        param_list = eval(f"({params})")
+        try:
+            param_list = eval(f"({params})")
+        except (NameError, SyntaxError):
+            param_list = params
+            
         if not isinstance(param_list, tuple):
             param_list = (param_list,)
             
@@ -107,7 +116,7 @@ def get_action_completion(agent: Agent, screen: Screen, mock_actions: list[str])
 
     actions_raw = [f"{method_name}({[params]})" for method_name, params in matches]
     image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-    return image, action_names, actions_raw, actions
+    return image, action_names, actions_raw, actions, response
 
 
 def get_report(process_id, screen_id, match_time, check_time, pairs, inconsistencies, action_correct, action_trials) -> str:
